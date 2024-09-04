@@ -25,7 +25,7 @@ class DiagonalPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     for (var pair in diagonals) {
-      if (pair.length == 2) {
+      if (pair.length <=2) {
         canvas.drawCircle(pair[0], 5, pointPaint);
         canvas.drawCircle(pair[1], 5, pointPaint);
       }

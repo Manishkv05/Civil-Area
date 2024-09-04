@@ -15,6 +15,9 @@ class TouchPointPainter extends CustomPainter {
        
       ..style = PaintingStyle.fill;
         // Draw lines between consecutive points
+         for (final point in touchPoints) {
+      canvas.drawCircle(point, 5, paint);
+    }
     for (int i = 0; i < touchPoints.length - 1; i++) {
       
       canvas.drawLine(touchPoints[i], touchPoints[i + 1], paint);

@@ -2,6 +2,11 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:polycalculator/formula/area.dart';
+import 'package:polycalculator/formula/triangles.dart';
+import 'package:polycalculator/textplace.dart';
 import 'package:polycalculator/firstandlast.dart';
 
 import 'package:polycalculator/point.dart';
@@ -33,8 +38,18 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
   List<Offset> temp=[];
   List<List<Offset>> setDiagonal = [];
    final List<TextEditingController> _controllers = [];
+    late final TextEditingController _length;
+     List<Offset> midpoints = [];
+     List<Offset> dmidpoints=[];
+     List<String> edgelengthlist=[];
+     List<String> diagonallengthlist=[];
+     double area=0.0;
+      
+  List<TextEditingController> edgetextControllers = [];
+  List<TextEditingController> diagonaltextControllers = [];
   
   bool _iscompleted=false;
+  bool _setlength=false;
   var firstPoint;
   var secondPoint;
   bool _isdiagonal=false;
@@ -65,31 +80,52 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-          title: Text('Touch Position Example'),
-          actions: [TextButton(onPressed: (){  setinputplaceholde();}, child: Text('hi')),
+          title: Container(width: 100,height: 30,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 18,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
+          actions: [TextButton(onPressed: (){
+               List<List<double>> triangles = calculateTriangleSides(
+    positions,
+    setDiagonal,
+    edgelengthlist,
+    diagonallengthlist,
+    midpoints,
+    dmidpoints,
+    
+  );
+   double area1 = calculatePolygonAreaFromSides(triangles);
+   print(area);
+  setState(() {
+    area=area1;
+  });
+// List<List<double?>> emptyList = List.generate(
+//   triangles.length,
+//   (i) => List<double?>.filled(triangles[i].length, null),
+// );
+
+
+  //  updateListWithEdgeOrDiagonalLengths(triangles, midpoints, dmidpoints, edgelengthlist, diagonallengthlist, emptyList);
+  print(triangles);
+            }, child: Text('area')),
+          TextButton(onPressed: (){  setState(() {
+            _setlength=true;
+             calculateMidpoints();
+             diagonalcalculateMidpoints();
+          });}, child: Text('length')),
             TextButton(onPressed: () {setState(() {
              _iscompleted=false;
             positions.clear();
             temp.clear();
             _touchPosition.clear();
             setDiagonal.clear();
+            midpoints.clear();
+            dmidpoints.clear();
             _isdiagonal=false;
             _candraw=false;
+             edgetextControllers.clear();
+             diagonaltextControllers.clear(); 
+             edgelengthlist.clear();
           });  },
           child:Icon(Icons.replay_outlined),),
-           TextButton(
-            onPressed: () {
-              
-             temp.clear();
-              if (positions.length >= 4) {
-                if(_iscompleted)
-                setState(() {
-                 _isdiagonal=true;
-                });
-              }
-            },
-            child: Text("Set Diagonal", style: TextStyle(color: const Color.fromARGB(255, 14, 13, 13))),
-          ),]
+      ]
         ),
       body: GestureDetector(
       
@@ -131,6 +167,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
                     Offset lastPoint = temp.last;
                     Offset secondLastPoint = temp[temp.length - 2];
                     setDiagonal.add([secondLastPoint, lastPoint]);
+                    temp.clear();
                   }
      
     
@@ -138,15 +175,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
 
        
       
-      //if(diagonals.length==1)
-      // for (int i = 0; i < positions.length; i++) {
-      //  Offset currentPoint = diagonals[0];
-      // Offset nextPoint = diagonals[(0+1) % positions.length]; // Circular index
-
-      // if (currentPoint != nextPoint) {
-        // _candraw=true;
-      // }
-      // }
+    
         
       
    
@@ -171,6 +200,13 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
           
                   _iscompleted=true;
                   _touchPosition.add(positions.first);
+                  temp.clear();
+              if (positions.length >= 4) {
+                if(_iscompleted)
+                
+                 _isdiagonal=true;
+                
+              }
                 });
                 Navigator.of(context).pop();
               },
@@ -199,19 +235,81 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
        
         child: Stack(
           children:[ CustomPaint(
-            painter: TouchPointPainter(_touchPosition),
-          foregroundPainter:DiagonalPainter(setDiagonal),
-          child: Container(
+            painter: DiagonalPainter(setDiagonal),
+          foregroundPainter:TouchPointPainter(_touchPosition),
+          child: 
+        Stack(children:[ Container(),
+          //     CustomPaint(
+          //      painter: TextPlaceholderPainter(midpoints,dmidpoints),
+          //    child: Container(),
+            
+          // ),
+            if (_setlength)
+            ...midpoints.map((midpoint) {
+              int index = midpoints.indexOf(midpoint);
+              return Positioned(
+                left: midpoint.dx-50, // Adjust positioning as needed
+                top: midpoint.dy+5,
+                child: Container(
+                  color: const Color.fromARGB(255, 77, 117, 186),
+                  width: 50,
+                  height: 30,
+                  child: TextField(
+                    controller: edgetextControllers[index],
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    
+                      hintText: 'set',
+                    ),
+                      onSubmitted:(value){
+                        setState(() {
+                          edgelengthlist[index]=value;
+                        });
+                      
+                        print(edgelengthlist);
+                      }
+                  ),
+                ),
+              );
+            }).toList(),
+            ...dmidpoints.map((midpoint) {
+              int index = dmidpoints.indexOf(midpoint);
+              return Positioned(
+                left: midpoint.dx , // Adjust positioning as needed
+                top: midpoint.dy ,
+                child: Container(
+                  color: const Color.fromARGB(255, 77, 117, 186),
+                  width: 50,
+                  height: 30,
+                  child: TextField(
+                    keyboardType:TextInputType.number,
+                    controller: diagonaltextControllers[index],
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    
+                      hintText: 'set',
+                    ),
+                      onSubmitted:(value){
+                        setState(() {
+                          diagonallengthlist[index]=value;
+                        });
+                      
+                        print(edgelengthlist);
+                        print(diagonallengthlist);
+                      }
+                  ),
+                ),
+              );
+            }).toList(),
+             
+          ]),
+          
             
            // color: const Color.fromARGB(255, 136, 137, 140),
-            child: Center(
-              child: Text(
-                'Touch anywhere on the screen',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
-          ),
-                ),
+               ),
+         
+          
+  
                
           ]
         ),
@@ -222,4 +320,114 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
     const double threshold = 10.0; // Define how close is "close enough"
     return (tapPosition - positions.first).distance < threshold;
   }
+
+  void calculateMidpoints() {
+    midpoints.clear();
+    for (int i = 0; i < _touchPosition.length-1; i++) {
+      Offset p1 = _touchPosition[i];
+      Offset p2 = _touchPosition[i + 1];
+      Offset midpoint = Offset(
+        (p1.dx + p2.dx) / 2,
+        (p1.dy + p2.dy) / 2,
+      );
+      midpoints.add(midpoint);
+       edgetextControllers.add(TextEditingController()); 
+        edgelengthlist.add(''); 
+    }
+
+    // Handle the midpoint between the first and last point
+   
+  }
+   void diagonalcalculateMidpoints() {
+    dmidpoints.clear();
+      diagonaltextControllers.clear(); // Ensure these lists are cleared before adding new items
+  diagonallengthlist.clear();
+   print('Processing setDiagonal, length: ${setDiagonal.length}, contents: $setDiagonal');
+    for (int i = 0; i < setDiagonal.length; i++) {
+      List<Offset> t=setDiagonal[i];
+  print('Processing setDiagonal[$i], length: ${t.length}, contents: $t');
+      if (t.length == 2) {
+      Offset p1 = t[0];
+      Offset p2 = t[1];
+      Offset midpoint = Offset(
+        (p1.dx + p2.dx) / 2,
+        (p1.dy + p2.dy) / 2,
+      );
+      dmidpoints.add(midpoint);
+       diagonaltextControllers.add(TextEditingController()); 
+        diagonallengthlist.add(''); 
+        print(dmidpoints);
+        print(diagonallengthlist);
+    
+    }
+    }
+
+    
+   
+  }
+//   void updateListWithEdgeOrDiagonalLengths(
+//   List<List<double>> triangles,
+//   List<Offset> midpointlist,
+//   List<Offset> diamidpoint,
+//   List<String> edgelengthlist,
+//   List<String> diagonallengthlist,
+//   List<List<double?>> emptyList,
+// ) {
+//   for (int i = 0; i < triangles.length; i++) {
+//     // Convert triangle to a Set for easy comparison
+//     Set<double> triangleSet = triangles[i].toSet();
+
+//     // Check if the triangle is in `midpointlist`
+//     bool isInMidpoint = false;
+//     for (var midpoint in midpointlist) {
+//       // Use Set to compare
+//       if (triangleSet.contains(midpoint)) {
+//         isInMidpoint = true;
+//         break;
+//       }
+//     }
+
+//     if (isInMidpoint) {
+//       // Update the `emptyList` with edge length
+//       if (i < emptyList.length && i < edgelengthlist.length) {
+//         try {
+//           double edgeLength = double.parse(edgelengthlist[i]);
+//           emptyList[i] = List.filled(emptyList[i].length,0.0);
+//           emptyList[i][0] = edgeLength; // Storing edge length or other information
+//         } catch (e) {
+//           print('Error parsing edge length at index $i: ${edgelengthlist[i]}');
+//         }
+//       }
+//     } else {
+//       // Check in `diamidpoint` if not found in `midpointlist`
+//       bool isInDiamidpoint = false;
+//       for (var diamid in diamidpoint) {
+//         // Use Set to compare
+//         if (triangleSet.contains(diamid)) {
+//           isInDiamidpoint = true;
+//           break;
+//         }
+//       }
+
+//       if (isInDiamidpoint) {
+//         // Update the `emptyList` with diagonal length
+//         if (i < emptyList.length && i < diagonallengthlist.length) {
+//           try {
+//             double diagonalLength = double.parse(diagonallengthlist[i]);
+//             emptyList[i] = List.filled(emptyList[i].length, 0.0);
+//             emptyList[i][0] = diagonalLength; // Storing diagonal length or other information
+//           } catch (e) {
+//             print('Error parsing diagonal length at index $i: ${diagonallengthlist[i]}');
+//           }
+//           finally{
+//               double area = calculatePolygonAreaFromSides(emptyList);
+//               print(area);
+//           }
+//         }
+//       }
+//     }
+//   }
+  
+// }
+
 }
