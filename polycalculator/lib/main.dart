@@ -80,52 +80,67 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-          title: Container(width: 100,height: 30,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 18,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
-          actions: [TextButton(onPressed: (){
-               List<List<double>> triangles = calculateTriangleSides(
-    positions,
-    setDiagonal,
-    edgelengthlist,
-    diagonallengthlist,
-    midpoints,
-    dmidpoints,
-    
-  );
-   double area1 = calculatePolygonAreaFromSides(triangles);
-   print(area);
-  setState(() {
-    area=area1;
-  });
-// List<List<double?>> emptyList = List.generate(
-//   triangles.length,
-//   (i) => List<double?>.filled(triangles[i].length, null),
-// );
-
-
-  //  updateListWithEdgeOrDiagonalLengths(triangles, midpoints, dmidpoints, edgelengthlist, diagonallengthlist, emptyList);
-  print(triangles);
-            }, child: Text('area')),
-          TextButton(onPressed: (){  setState(() {
-            _setlength=true;
-             calculateMidpoints();
-             diagonalcalculateMidpoints();
-          });}, child: Text('length')),
-            TextButton(onPressed: () {setState(() {
-             _iscompleted=false;
-            positions.clear();
-            temp.clear();
-            _touchPosition.clear();
-            setDiagonal.clear();
-            midpoints.clear();
-            dmidpoints.clear();
-            _isdiagonal=false;
-            _candraw=false;
-             edgetextControllers.clear();
-             diagonaltextControllers.clear(); 
-             edgelengthlist.clear();
-          });  },
-          child:Icon(Icons.replay_outlined),),
+          title: Container(width: 100,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
+          actions: [Container(decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
+            child: Center(
+              child: TextButton(onPressed: (){
+                   List<List<double>> triangles = calculateTriangleSides(
+                  positions,
+                  setDiagonal,
+                  edgelengthlist,
+                  diagonallengthlist,
+                  midpoints,
+                  dmidpoints,
+                  
+                );
+                 double area1 = calculatePolygonAreaFromSides(triangles);
+                 print(area);
+                setState(() {
+                  area=area1;
+                });
+              // List<List<double?>> emptyList = List.generate(
+              //   triangles.length,
+              //   (i) => List<double?>.filled(triangles[i].length, null),
+              // );
+              
+              
+                //  updateListWithEdgeOrDiagonalLengths(triangles, midpoints, dmidpoints, edgelengthlist, diagonallengthlist, emptyList);
+                print(triangles);
+                }, child: Text('Area',style:TextStyle(fontSize: 20,fontWeight: FontWeight.bold))),
+            ),
+          ),
+          SizedBox(width: 15,),
+                    
+                    Container(
+                      decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
+                      child: TextButton(onPressed: (){  setState(() {
+          _setlength=true;
+           calculateMidpoints();
+           diagonalcalculateMidpoints();
+                      });}, child: Text('length',style:TextStyle(fontSize: 20))),
+                    ),
+                    SizedBox(width: 15,),
+                      Container(
+                  decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
+          child: TextButton(onPressed: () {setState(() {
+           _iscompleted=false;
+          positions.clear();
+          temp.clear();
+          _touchPosition.clear();
+          setDiagonal.clear();
+          midpoints.clear();
+          dmidpoints.clear();
+          _isdiagonal=false;
+          _candraw=false;
+           edgetextControllers.clear();
+           diagonaltextControllers.clear(); 
+           edgelengthlist.clear();
+                      });  },
+                      child:Icon(Icons.replay_outlined),),
+                      ),
+                      SizedBox(width: 15,),
       ]
+      
         ),
       body: GestureDetector(
       
@@ -251,11 +266,12 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
                 left: midpoint.dx-50, // Adjust positioning as needed
                 top: midpoint.dy+5,
                 child: Container(
-                  color: const Color.fromARGB(255, 77, 117, 186),
+                 // color: const Color.fromARGB(255, 77, 117, 186),
                   width: 50,
                   height: 30,
                   child: TextField(
                     controller: edgetextControllers[index],
+                     keyboardType:TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     
@@ -278,7 +294,7 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
                 left: midpoint.dx , // Adjust positioning as needed
                 top: midpoint.dy ,
                 child: Container(
-                  color: const Color.fromARGB(255, 77, 117, 186),
+                 // color: const Color.fromARGB(255, 77, 117, 186),
                   width: 50,
                   height: 30,
                   child: TextField(
@@ -286,7 +302,6 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
                     controller: diagonaltextControllers[index],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                    
                       hintText: 'set',
                     ),
                       onSubmitted:(value){
@@ -317,7 +332,7 @@ else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) 
     );
   }
   bool _isCloseToFirstPoint(Offset tapPosition) {
-    const double threshold = 10.0; // Define how close is "close enough"
+    const double threshold = 35.0; // Define how close is "close enough"
     return (tapPosition - positions.first).distance < threshold;
   }
 
