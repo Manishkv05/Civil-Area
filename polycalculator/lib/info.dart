@@ -111,8 +111,8 @@ class info extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal:8.0),
                       child: Text(
-                        'manishkv0918@gmail.com',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        'Click here to Contact me through mail',
+                        style: TextStyle(color:Color.fromARGB(255, 10, 61, 244), fontSize: 14),
                       ),
                     ),
                   ],
@@ -127,14 +127,14 @@ class info extends StatelessWidget {
                   children: [
                      SvgPicture.asset(
             'lib/assets/linkedin-svgrepo-com.svg', // Replace with your SVG URL
-            height: 23.0, // Set height if necessary
-            width: 23.0, // Set width if necessary
+            height: 19.5, // Set height if necessary
+            width: 19.5, // Set width if necessary
           ),
                     
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(6.0),
                       child: Text(
-                        'https://www.linkedin.com/in/manish-kv',
+                        'Click here to Contact me through linkedin',
                         style: TextStyle(color: Color.fromARGB(255, 10, 61, 244), fontSize: 14),
                       ),
                     ),

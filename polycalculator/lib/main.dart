@@ -84,7 +84,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
     return Scaffold(
       backgroundColor: Colors.white,
        appBar: AppBar(
-        backgroundColor:Colors.blueAccent,
+        backgroundColor:Color.fromARGB(255, 194, 168, 22),
           title: Row(
             children: [
               Container(width: 100,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
