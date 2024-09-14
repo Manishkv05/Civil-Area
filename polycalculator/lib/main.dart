@@ -2,10 +2,13 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 import 'package:polycalculator/formula/area.dart';
 import 'package:polycalculator/formula/triangles.dart';
+import 'package:polycalculator/info.dart';
 import 'package:polycalculator/textplace.dart';
 import 'package:polycalculator/firstandlast.dart';
 
@@ -79,255 +82,321 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
        appBar: AppBar(
-          title: Container(width: 100,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
-          actions: [Container(decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
-            child: Center(
-              child: TextButton(onPressed: (){
-                   List<List<double>> triangles = calculateTriangleSides(
-                  positions,
-                  setDiagonal,
-                  edgelengthlist,
-                  diagonallengthlist,
-                  midpoints,
-                  dmidpoints,
-                  
-                );
-                 double area1 = calculatePolygonAreaFromSides(triangles);
-                 print(area);
-                setState(() {
-                  area=area1;
-                });
-              // List<List<double?>> emptyList = List.generate(
-              //   triangles.length,
-              //   (i) => List<double?>.filled(triangles[i].length, null),
-              // );
-              
-              
-                //  updateListWithEdgeOrDiagonalLengths(triangles, midpoints, dmidpoints, edgelengthlist, diagonallengthlist, emptyList);
-                print(triangles);
-                }, child: Text('Area',style:TextStyle(fontSize: 20,fontWeight: FontWeight.bold))),
+        backgroundColor:Colors.blueAccent,
+          title: Row(
+            children: [
+              Container(width: 100,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
+              Text('sq.units',style: TextStyle(color: Colors.red,fontSize: 13.5,fontWeight: FontWeight.bold)),
+            ],
+          ),
+          actions: [GestureDetector(
+            onTap:  (){
+                     List<List<double>> triangles = calculateTriangleSides(
+                    positions,
+                    setDiagonal,
+                    edgelengthlist,
+                    diagonallengthlist,
+                    midpoints,
+                    dmidpoints,
+                    
+                  );
+                   double area1 = calculatePolygonAreaFromSides(triangles);
+                   print(area);
+                  setState(() {
+                    area=area1;
+                  });
+                // List<List<double?>> emptyList = List.generate(
+                //   triangles.length,
+                //   (i) => List<double?>.filled(triangles[i].length, null),
+                // );
+                
+                
+                  //  updateListWithEdgeOrDiagonalLengths(triangles, midpoints, dmidpoints, edgelengthlist, diagonallengthlist, emptyList);
+                  print(triangles);
+                  },
+            child: Container(decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),
+          
+            border: Border.all(width: 2,color: Colors.black),),
+              width:80,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 20),
+                child: Text('Area',style:TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+              ),
             ),
           ),
-          SizedBox(width: 15,),
+          SizedBox(width: 10,),
                     
-                    Container(
-                      decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
-                      child: TextButton(onPressed: (){  setState(() {
-          _setlength=true;
-           calculateMidpoints();
-           diagonalcalculateMidpoints();
-                      });}, child: Text('length',style:TextStyle(fontSize: 20))),
-                    ),
-                    SizedBox(width: 15,),
-                      Container(
-                  decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
-          child: TextButton(onPressed: () {setState(() {
-           _iscompleted=false;
-          positions.clear();
-          temp.clear();
-          _touchPosition.clear();
-          setDiagonal.clear();
-          midpoints.clear();
-          dmidpoints.clear();
-          _isdiagonal=false;
-          _candraw=false;
-           edgetextControllers.clear();
-           diagonaltextControllers.clear(); 
-           edgelengthlist.clear();
-                      });  },
-                      child:Icon(Icons.replay_outlined),),
+                    GestureDetector(
+                      onTap:(){  setState(() {
+                                _setlength=true;
+                                 calculateMidpoints();
+                                 diagonalcalculateMidpoints();
+                        });} ,
+                      child: Container(
+                        width: 80,
+                        decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),),
+                        child: Padding(
+                          padding:const EdgeInsets.symmetric(vertical: 5.0,horizontal: 13),
+                          child: Text('Length',style:TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+                        ),
                       ),
-                      SizedBox(width: 15,),
+                    ),
+                    SizedBox(width: 10,),
+                      GestureDetector(
+                        onTap:  () {setState(() {
+                                   _iscompleted=false;
+                                  positions.clear();
+                                  temp.clear();
+                                  _touchPosition.clear();
+                                  setDiagonal.clear();
+                                  midpoints.clear();
+                                  dmidpoints.clear();
+                                  _isdiagonal=false;
+                                  _candraw=false;
+                                   edgetextControllers.clear();
+                                   diagonaltextControllers.clear(); 
+                                   edgelengthlist.clear();
+                                   area=0.0;
+
+                        });  },
+                        child: Container(
+                                          decoration:BoxDecoration(borderRadius:  BorderRadius.circular(30),border: Border.all(width: 2,color: Colors.black),),
+                                  child: Icon(Icons.replay_circle_filled_outlined,weight:100,color:Colors.red,),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
       ]
       
         ),
-      body: GestureDetector(
-      
-      
-        onTapDown: (TapDownDetails details) {
-                   if(_iscompleted){
-    //                   setState(() {
-                        
-    // const double threshold = 10.0; // Define how close is "close enough"
-    // return (tapPosition - touchPoints.first).distance < threshold;
-  
-    //       temp.add(details.localPosition);
+      body: Stack(
+        children:[ GestureDetector(
+        
+        
+          onTapDown: (TapDownDetails details) {
+                     if(_iscompleted){
+            //                   setState(() {
+                          
+            // const double threshold = 10.0; // Define how close is "close enough"
+            // return (tapPosition - touchPoints.first).distance < threshold;
           
-    //               // Create diagonals between the last two points
+            //       temp.add(details.localPosition);
+            
+            //               // Create diagonals between the last two points
+                   
+                  
+         
+        
+           
+            //   });
+            setState(() {
+         
+            for (Offset p in positions) {
+        if ((p.dx - details.localPosition.dx).abs() < 20 && (p.dy - details.localPosition.dy).abs() < 20) {
+          temp.add(p); // Position is considered present
+        }
+            
+           // Position is not present
+          }
+        
+            });
+           
+        
                  
-                
-       
-
-         
-    //   });
-    setState(() {
-       
-    for (Offset p in positions) {
-      if ((p.dx - details.localPosition.dx).abs() < 20 && (p.dy - details.localPosition.dy).abs() < 20) {
-        temp.add(p); // Position is considered present
-      }
-    
-   // Position is not present
-  }
-      
-    });
-   
-
                
+        
+        if(_isdiagonal){
+        if (temp.length >= 2) {
+                      Offset lastPoint = temp.last;
+                      Offset secondLastPoint = temp[temp.length - 2];
+                      setDiagonal.add([secondLastPoint, lastPoint]);
+                      temp.clear();
+                    }
              
-
-      if(_isdiagonal){
-      if (temp.length >= 2) {
-                    Offset lastPoint = temp.last;
-                    Offset secondLastPoint = temp[temp.length - 2];
-                    setDiagonal.add([secondLastPoint, lastPoint]);
+            
+        }
+        
+         
+        
+            
+          
+        
+           
+          
+        }
+        else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) {
+                // Show "Done" popup
+                  showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Drawing Completed"),
+            content: Text("You have completed the drawing."),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  setState(() {
+                      print('hi${positions}');
+                      print(temp);
+                      print('bi{$setDiagonal}');
+            
+                    _iscompleted=true;
+                    _touchPosition.add(positions.first);
                     temp.clear();
-                  }
-     
-    
-      }
-
-       
-      
-    
-        
-      
-   
-  
-}
-else   if (positions.isNotEmpty && _isCloseToFirstPoint(details.localPosition)) {
-              // Show "Done" popup
-                showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Drawing Completed"),
-          content: Text("You have completed the drawing."),
-          actions: [
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                setState(() {
-                    print('hi${positions}');
-                    print(temp);
-                    print('bi{$setDiagonal}');
-          
-                  _iscompleted=true;
-                  _touchPosition.add(positions.first);
-                  temp.clear();
-              if (positions.length >= 4) {
-                if(_iscompleted)
-                
-                 _isdiagonal=true;
-                
-              }
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  
-            } else
-        
-
-          setState(() {
-          
-             _touchPosition.add(details.localPosition);
-          
-        positions.add(details.localPosition);
-       
-            
-          
-      
-          });
-        
-        
+                if (positions.length >= 4) {
+                  if(_iscompleted)
+                  
+                   _isdiagonal=true;
+                  
+                }
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
         },
-       
-        child: Stack(
-          children:[ CustomPaint(
-            painter: DiagonalPainter(setDiagonal),
-          foregroundPainter:TouchPointPainter(_touchPosition),
-          child: 
-        Stack(children:[ Container(),
-          //     CustomPaint(
-          //      painter: TextPlaceholderPainter(midpoints,dmidpoints),
-          //    child: Container(),
-            
-          // ),
-            if (_setlength)
-            ...midpoints.map((midpoint) {
-              int index = midpoints.indexOf(midpoint);
-              return Positioned(
-                left: midpoint.dx-50, // Adjust positioning as needed
-                top: midpoint.dy+5,
-                child: Container(
-                 // color: const Color.fromARGB(255, 77, 117, 186),
-                  width: 50,
-                  height: 30,
-                  child: TextField(
-                    controller: edgetextControllers[index],
-                     keyboardType:TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    
-                      hintText: 'set',
-                    ),
-                      onSubmitted:(value){
-                        setState(() {
-                          edgelengthlist[index]=value;
-                        });
-                      
-                        print(edgelengthlist);
-                      }
-                  ),
-                ),
-              );
-            }).toList(),
-            ...dmidpoints.map((midpoint) {
-              int index = dmidpoints.indexOf(midpoint);
-              return Positioned(
-                left: midpoint.dx , // Adjust positioning as needed
-                top: midpoint.dy ,
-                child: Container(
-                 // color: const Color.fromARGB(255, 77, 117, 186),
-                  width: 50,
-                  height: 30,
-                  child: TextField(
-                    keyboardType:TextInputType.number,
-                    controller: diagonaltextControllers[index],
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'set',
-                    ),
-                      onSubmitted:(value){
-                        setState(() {
-                          diagonallengthlist[index]=value;
-                        });
-                      
-                        print(edgelengthlist);
-                        print(diagonallengthlist);
-                      }
-                  ),
-                ),
-              );
-            }).toList(),
-             
-          ]),
+            );
           
+              } else
+          
+        
+            setState(() {
             
-           // color: const Color.fromARGB(255, 136, 137, 140),
-               ),
+               _touchPosition.add(details.localPosition);
+            
+          positions.add(details.localPosition);
          
+              
+            
+        
+            });
           
-  
+          
+          },
+         
+          child: Stack(
+            children:[ CustomPaint(
+              painter: DiagonalPainter(setDiagonal),
+            foregroundPainter:TouchPointPainter(_touchPosition),
+            child: 
+          Stack(children:[ Container(),
+            //     CustomPaint(
+            //      painter: TextPlaceholderPainter(midpoints,dmidpoints),
+            //    child: Container(),
+              
+            // ),
+              if (_setlength)
+              ...midpoints.map((midpoint) {
+                int index = midpoints.indexOf(midpoint);
+                return Positioned(
+                  left: midpoint.dx-30, // Adjust positioning as needed
+                  top: midpoint.dy-10,
+                  child: Container(
+        
+                   // color: const Color.fromARGB(255, 77, 117, 186),
+                width: 100,
+                    height: 50.55,
+                    child: TextField(
+                       style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),
+                        maxLines: null,
+                      minLines: 1,
+                      controller: edgetextControllers[index],
+                     
+                       keyboardType:TextInputType.number,
+                     
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                  
+                        hintText: 'Add',
+                        hintStyle:TextStyle(fontSize: 15,color: Colors.black),
+                         enabledBorder: OutlineInputBorder(         // Border color when not focused
+        borderSide: BorderSide(color: const Color.fromARGB(0, 0, 0, 0)),
+            ),
+            focusedBorder: OutlineInputBorder(         // Border color when focused
+        borderSide: BorderSide(color: Color.fromARGB(255, 29, 248, 5)),
+            ),
+                        
+                      ),
+                      
+                        onSubmitted:(value){
+                          setState(() {
+                            edgelengthlist[index]=value;
+                          });
+                          
+                        
+                          print(edgelengthlist);
+                        }
+                        
+                    ),
+                  ),
+                );
+              }).toList(),
+              ...dmidpoints.map((midpoint) {
+                int index = dmidpoints.indexOf(midpoint);
+                return Positioned(
+                  left: midpoint.dx-25 , // Adjust positioning as needed
+                  top: midpoint.dy ,
+                  child: Container(
+                  // color: Colors.green,
+                    width: 100,
+                    height: 50.55,
+                    child: TextField(
+                         style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),
+                      maxLines: null,
+                      minLines: 1,
+                      keyboardType:TextInputType.number,
+                      controller: diagonaltextControllers[index],
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Add',
+                      hintStyle:TextStyle(fontSize: 15,color: Colors.black),
+                        enabledBorder: OutlineInputBorder(         // Border color when not focused
+        borderSide: BorderSide(color: const Color.fromARGB(0, 0, 0, 0)),
+            ),
+            focusedBorder: OutlineInputBorder(         // Border color when focused
+        borderSide: BorderSide(color: Color.fromARGB(255, 29, 248, 5)),
+            ),
+                        
+        
+                      ),
+                        onSubmitted:(value){
+                          setState(() {
+                            diagonallengthlist[index]=value;
+                          });
+                        
+                          print(edgelengthlist);
+                          print(diagonallengthlist);
+                        }
+                    ),
+                  ),
+                );
+              }).toList(),
                
-          ]
+            ]),
+            
+              
+             // color: const Color.fromARGB(255, 136, 137, 140),
+                 ),
+            
+                 
+           
+            
+          
+                 
+            ]
+          ),
         ),
+        Padding(
+          padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width*0.9 ),
+          child: IconButton(onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => info(),));
+          
+          }, icon: Icon(Icons.info_rounded,color: Colors.black,)),
+        )
+        ],
       ),
     );
   }

@@ -35,7 +35,7 @@ class TouchPointPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: label,
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 25),
+          style: TextStyle(color: Colors.red, fontSize: 25),
         ),
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr,
