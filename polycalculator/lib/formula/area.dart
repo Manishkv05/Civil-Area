@@ -19,6 +19,7 @@ double calculatePolygonAreaFromSides(List<List<double?>> triangleSides) {
       double c = sides[2]??0.0;
 
       double area = calculateTriangleAreaFromSides(a, b, c);
+      print('triangleareas:${area}');
       totalArea += area;
     } else {
       throw Exception('Each triangle must have exactly 3 sides.');

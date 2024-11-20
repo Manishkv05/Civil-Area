@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:polycalculator/formula/area.dart';
+import 'package:polycalculator/formula/scalingconvert.dart';
 import 'package:polycalculator/formula/triangles.dart';
 import 'package:polycalculator/info.dart';
+import 'package:polycalculator/scalingpolyview.dart';
 import 'package:polycalculator/textplace.dart';
 import 'package:polycalculator/firstandlast.dart';
 
@@ -82,13 +84,15 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 5, 255, 34),
        appBar: AppBar(
-        backgroundColor:Color.fromARGB(255, 194, 168, 22),
+        backgroundColor:Colors.white,
+        
+        
           title: Row(
             children: [
               Container(width: 100,child: Center(child: Text(area.toString(),style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)),decoration:BoxDecoration(borderRadius:  BorderRadius.circular(10),border: Border.all(width: 2,color: Colors.black),)),
-              Text('sq.units',style: TextStyle(color: Colors.red,fontSize: 13.5,fontWeight: FontWeight.bold)),
+              Text('sq.units',style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width*0.033,fontWeight: FontWeight.bold)),
             ],
           ),
           actions: [GestureDetector(
@@ -104,6 +108,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
                   );
                    double area1 = calculatePolygonAreaFromSides(triangles);
                    print(area);
+                   print(area1);
                   setState(() {
                     area=area1;
                   });
@@ -232,7 +237,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Drawing Completed"),
-            content: Text("You have completed the drawing."),
+            content: Text("You have completed the polygon edges, connect diagonals by tapping exsisting edge points and then tap Length button on top to add distance/length to each of them."),
             actions: [
               TextButton(
                 child: Text("OK"),
@@ -316,7 +321,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
         borderSide: BorderSide(color: const Color.fromARGB(0, 0, 0, 0)),
             ),
             focusedBorder: OutlineInputBorder(         // Border color when focused
-        borderSide: BorderSide(color: Color.fromARGB(255, 29, 248, 5)),
+        borderSide: BorderSide(color: Colors.white),
             ),
                         
                       ),
@@ -357,7 +362,7 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
         borderSide: BorderSide(color: const Color.fromARGB(0, 0, 0, 0)),
             ),
             focusedBorder: OutlineInputBorder(         // Border color when focused
-        borderSide: BorderSide(color: Color.fromARGB(255, 29, 248, 5)),
+        borderSide: BorderSide(color: Colors.white),
             ),
                         
         
@@ -395,7 +400,12 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => info(),));
           
           }, icon: Icon(Icons.info_rounded,color: Colors.black,)),
-        )
+        ),
+       area!=0.0&&_touchPosition!=[]&&edgelengthlist!=[]? IconButton(onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) =>PolygonRescaleWidget( originalPoints: _touchPosition, edgeLengthList: edgelengthlist,),));
+       
+
+        }, icon:Icon(Icons.zoom_in,color: Colors.black,) ):Container()
         ],
       ),
     );
@@ -407,6 +417,9 @@ class _TouchPositionWidgetState extends State<TouchPositionWidget> {
 
   void calculateMidpoints() {
     midpoints.clear();
+    edgetextControllers.clear();
+    edgelengthlist.clear();
+    
     for (int i = 0; i < _touchPosition.length-1; i++) {
       Offset p1 = _touchPosition[i];
       Offset p2 = _touchPosition[i + 1];

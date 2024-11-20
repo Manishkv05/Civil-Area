@@ -62,7 +62,26 @@ class info extends StatelessWidget {
                 '4. Then click Area the app will show you the area of the polygon in Sq.units.',
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+               Text(
+                'Powered by:',
+                style: TextStyle(
+                   color: Color.fromARGB(255, 71, 245, 2),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),Row(
+                children: [
+                  Text('Chandrashekar ',   style: TextStyle( color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),),
+                  Text('[ Survey Officer, Manglore ]',   style: TextStyle( color: Colors.white, fontSize: 14,fontWeight: FontWeight.bold),),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Thyagraj ',   style: TextStyle( color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),),
+                  Text('[ Survey Officer, Ullal ]',   style: TextStyle( color: Colors.white, fontSize: 14,fontWeight: FontWeight.bold),),
+                ],
+              ),
+               SizedBox(height: 20),
               Text(
                 'Developed by:',
                 style: TextStyle(
@@ -77,7 +96,7 @@ class info extends StatelessWidget {
                       ),
              
            
-              Text("Hire me for professional Android, iOS, and web development services! Whether you're looking to build a mobile app, a responsive website, or need end-to-end software solutions, I've got you covered.", style: TextStyle(color: Colors.white, fontSize: 14)),
+              Text("Contact us for professional Android, iOS, and web development services! Whether you're looking to build a mobile app, a responsive website, or need end-to-end software solutions, We've got you covered.", style: TextStyle(color: Colors.white, fontSize: 14)),
              // SizedBox(height: 10),
                 Row(
                 children: [
@@ -111,8 +130,8 @@ class info extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal:8.0),
                       child: Text(
-                        'Click here to Contact me through mail',
-                        style: TextStyle(color:Color.fromARGB(255, 10, 61, 244), fontSize: 14),
+                        'manishkv0918@gmail.com',
+                        style: TextStyle(color:Color.fromARGB(255, 252, 252, 252), fontSize: 14),
                       ),
                     ),
                   ],
@@ -134,7 +153,7 @@ class info extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: Text(
-                        'Click here to Contact me through linkedin',
+                        'Click and Connect with linkedin',
                         style: TextStyle(color: Color.fromARGB(255, 10, 61, 244), fontSize: 14),
                       ),
                     ),
