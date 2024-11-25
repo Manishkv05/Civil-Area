@@ -122,6 +122,7 @@
 //     return true;
 //   }
 // }
+
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -154,23 +155,17 @@ class _PolygonRescaleWidgetState extends State<PolygonRescaleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen pixel density (dots per inch, or DPI)
-    double dpi = MediaQuery.of(context).devicePixelRatio * 160; // Approx. 160 DPI per devicePixelRatio
-    double pixelsPerCm = dpi / 2.54; // Convert DPI to pixels per cm
+    // Rescale the polygon to fit the device screen
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-    // Rescale the polygon
-    List<Offset> rescaledPolygon = rescalePolygonToCm(widget.originalPoints, widget.edgeLengthList, pixelsPerCm);
-
-    // Calculate the bounding box of the polygon
-    double minX = rescaledPolygon.map((e) => e.dx).reduce((a, b) => a < b ? a : b);
-    double maxX = rescaledPolygon.map((e) => e.dx).reduce((a, b) => a > b ? a : b);
-    double minY = rescaledPolygon.map((e) => e.dy).reduce((a, b) => a < b ? a : b);
-    double maxY = rescaledPolygon.map((e) => e.dy).reduce((a, b) => a > b ? a : b);
-
-    // Add padding around the bounding box to prevent cropping
-    double padding = 50.0;
-    double width = (maxX - minX) + 2 * padding;
-    double height = (maxY - minY) + 2 * padding;
+    // Rescale and center the polygon
+    List<Offset> normalizedPolygon = normalizePolygon(
+      widget.originalPoints,
+      screenWidth,
+      screenHeight,
+      padding: 50.0,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -186,19 +181,16 @@ class _PolygonRescaleWidgetState extends State<PolygonRescaleWidget> {
       body: Screenshot(
         controller: _screenshotController,
         child: InteractiveViewer(
-          minScale: 0.01, // Allow very far zoom out
-          maxScale: 100.0, // Allow very close zoom in
-          boundaryMargin: EdgeInsets.zero, // Allow panning beyond the edges
+          minScale: 0.5, // Allow zooming out
+          maxScale: 10.0, // Allow zooming in
+          boundaryMargin: EdgeInsets.all(50), // Provide margin for panning
           constrained: false,
           child: Container(
-            color: Colors.white, // Ensure a white background
+            color: Colors.white,
             child: Center(
-              child: SizedBox(
-                width: width,
-                height: height,
-                child: CustomPaint(
-                  painter: PolygonPainter(rescaledPolygon, Offset(padding - minX, padding - minY)),
-                ),
+              child: CustomPaint(
+                size: Size(screenWidth, screenHeight),
+                painter: PolygonPainter(normalizedPolygon),
               ),
             ),
           ),
@@ -276,28 +268,52 @@ class _PolygonRescaleWidgetState extends State<PolygonRescaleWidget> {
       await Permission.storage.request();
     }
   }
+
+  /// Normalize the polygon points to fit within the display area
+  List<Offset> normalizePolygon(
+      List<Offset> points, double screenWidth, double screenHeight,
+      {double padding = 0.0}) {
+    double minX = points.map((e) => e.dx).reduce((a, b) => a < b ? a : b);
+    double maxX = points.map((e) => e.dx).reduce((a, b) => a > b ? a : b);
+    double minY = points.map((e) => e.dy).reduce((a, b) => a < b ? a : b);
+    double maxY = points.map((e) => e.dy).reduce((a, b) => a > b ? a : b);
+
+    // Width and height of the bounding box
+    double width = maxX - minX;
+    double height = maxY - minY;
+
+    // Scale to fit the screen with padding
+    double scaleX = (screenWidth - 2 * padding) / width;
+    double scaleY = (screenHeight - 2 * padding) / height;
+    double scale = scaleX < scaleY ? scaleX : scaleY;
+
+    // Offset to center the polygon on the screen
+    double offsetX = (screenWidth - width * scale) / 2 - minX * scale;
+    double offsetY = (screenHeight - height * scale) / 2 - minY * scale;
+
+    // Apply scaling and offset to each point
+    return points.map((p) => Offset(p.dx * scale + offsetX, p.dy * scale + offsetY)).toList();
+  }
 }
 
 class PolygonPainter extends CustomPainter {
   final List<Offset> points;
-  final Offset offset;
 
-  PolygonPainter(this.points, this.offset);
+  PolygonPainter(this.points);
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.black
+      ..color = Colors.blue
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
     if (points.isEmpty) return;
 
-    // Draw polygon with offset to center it in the canvas
-    Path path = Path()..moveTo(points[0].dx + offset.dx, points[0].dy + offset.dy);
-
+    // Draw polygon
+    Path path = Path()..moveTo(points[0].dx, points[0].dy);
     for (int i = 1; i < points.length; i++) {
-      path.lineTo(points[i].dx + offset.dx, points[i].dy + offset.dy);
+      path.lineTo(points[i].dx, points[i].dy);
     }
     path.close();
 
@@ -308,11 +324,4 @@ class PolygonPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
-}
-
-// Dummy function for rescaling polygon (replace with your logic)
-List<Offset> rescalePolygonToCm(
-    List<Offset> originalPoints, List<String> edgeLengthList, double pixelsPerCm) {
-  // Example: Just returning original points without modification
-  return originalPoints;
 }
